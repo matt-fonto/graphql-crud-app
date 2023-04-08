@@ -12,6 +12,7 @@ const {
   GraphQLString,
   GraphQLSchema,
   GraphQLList,
+  GraphQLNonNull,
 } = require("graphql");
 
 /* Create a GraphQL schema that defines:
@@ -99,8 +100,66 @@ const RootQuery = new GraphQLObjectType({
   },
 });
 
+//MUTATIONS
+//Mutations are used to modify the data in the database
+const mutation = new GraphQLObjectType({
+  name: "Mutation",
+  fields: {
+    //add a client
+    addClient: {
+      type: ClientType,
+      args: {
+        name: { type: GraphQLNonNull(GraphQLString) }, //GraphQLNonNull: a wrapper that makes the field required
+        email: { type: GraphQLNonNull(GraphQLString) },
+        phone: { type: GraphQLNonNull(GraphQLString) },
+      },
+      resolve(parent, args) {
+        //create a new instance of the Client model
+        const client = new Client({
+          name: args.name, //the name passed in the query
+          email: args.email, //the email passed in the query
+          phone: args.phone, //the phone passed in the query
+        });
+
+        //save the client to the database
+        return client.save();
+      },
+    },
+    //delete a client
+    deleteClient: {
+      type: ClientType,
+      args: {
+        id: { type: GraphQLNonNull(GraphQLID) },
+      },
+      resolve(parent, args) {
+        return Client.findByIdAndDelete(args.id);
+      },
+    },
+    //update a client
+    updateClient: {
+      type: ClientType,
+      args: {
+        id: { type: GraphQLNonNull(GraphQLID) },
+        name: { type: GraphQLString },
+        email: { type: GraphQLString },
+        phone: { type: GraphQLString },
+      },
+      resolve(parent, args) {
+        const updateClient = {};
+
+        if (args.name) updateClient.name = args.name;
+        if (args.email) updateClient.email = args.email;
+        if (args.phone) updateClient.phone = args.phone;
+
+        return Client.findByIdAndUpdate(args.id, updateClient, { new: true });
+      },
+    },
+  },
+});
+
 //export the schema
 module.exports = new GraphQLSchema({
   //query: the root query
   query: RootQuery,
+  mutation,
 });
