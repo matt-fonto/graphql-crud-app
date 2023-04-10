@@ -13,6 +13,7 @@ const {
   GraphQLSchema,
   GraphQLList,
   GraphQLNonNull,
+  GraphQLEnumType,
 } = require("graphql");
 
 /* Create a GraphQL schema that defines:
@@ -152,6 +153,79 @@ const mutation = new GraphQLObjectType({
         if (args.phone) updateClient.phone = args.phone;
 
         return Client.findByIdAndUpdate(args.id, updateClient, { new: true });
+      },
+    },
+    //add a project
+    addProject: {
+      //the type of the mutation will be ProjectType
+      type: ProjectType,
+      //args: the arguments that will be passed to the mutation
+      args: {
+        name: { type: GraphQLNonNull(GraphQLString) },
+        description: { type: GraphQLNonNull(GraphQLString) },
+        //status is an enum type
+        status: {
+          type: new GraphQLEnumType({
+            name: "ProjectStatus",
+            values: {
+              new: { value: "To begin" },
+              inProgress: { value: "In progress" },
+              completed: { value: "Completed" },
+            },
+          }),
+          defaultValue: "To begin",
+        },
+        clientId: { type: GraphQLNonNull(GraphQLID) },
+      },
+      resolve(parent, args) {
+        const project = new Project({
+          name: args.name,
+          description: args.description,
+          status: args.status,
+          clientId: args.clientId,
+        });
+
+        return project.save();
+      },
+    },
+    //delete a project
+    deleteProject: {
+      type: ProjectType,
+      args: {
+        id: { type: GraphQLNonNull(GraphQLID) },
+      },
+      resolve(parent, args) {
+        return Project.findByIdAndDelete(args.id);
+      },
+    },
+    //update a project
+    updateProject: {
+      type: ProjectType,
+      args: {
+        id: { type: GraphQLNonNull(GraphQLID) }, //the only required argument is the id
+        name: { type: GraphQLString },
+        description: { type: GraphQLString },
+        status: {
+          type: new GraphQLEnumType({
+            name: "ProjectStatusUpdate",
+            values: {
+              new: { value: "To begin" },
+              inProgress: { value: "In progress" },
+              completed: { value: "Completed" },
+            },
+          }),
+        },
+        clientId: { type: GraphQLString },
+      },
+      resolve(parent, args) {
+        const updateProject = {};
+
+        if (args.name) updateProject.name = args.name;
+        if (args.description) updateProject.description = args.description;
+        if (args.status) updateProject.status = args.status;
+        if (args.clientId) updateProject.clientId = args.clientId;
+
+        return Project.findByIdAndUpdate(args.id, updateProject, { new: true });
       },
     },
   },

@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node server/index.js",
-    "dev": "nodemon server/index.js"
+    "start:front-end" : "cd client && npm start",
+    "start:back-end": "nodemon server/index.js"
+
   },
   "keywords": [],
   "author": "",
