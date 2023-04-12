@@ -33,13 +33,16 @@ export default function AddClientModal() {
   const onSubmit = (e) => {
     e.preventDefault();
 
+    // Validation
     if (name === "" || email === "" || phone === "") {
       alert("All fields are required");
       return;
     }
 
+    // Add the client to the database
     addClient(name, email, phone);
 
+    // Clear the form
     setName("");
     setEmail("");
     setPhone("");

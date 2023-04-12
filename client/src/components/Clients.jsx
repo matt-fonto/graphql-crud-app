@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import ClientRow from "./ClientRow";
 import { GET_CLIENTS } from "../queries/clientQueries";
 import Spinner from "./Spinner";
@@ -22,7 +22,8 @@ export default function Clients() {
               <th scope="col">Name</th>
               <th scope="col">Email</th>
               <th scope="col">Phone</th>
-              <th scope="col">Name</th>
+              {/* The trash icon will be here */}
+              <th scope="col"></th>
             </tr>
           </thead>
 
