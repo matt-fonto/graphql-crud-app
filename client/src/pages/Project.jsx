@@ -4,6 +4,7 @@ import { GET_PROJECT } from "../queries/projectQueries";
 import Spinner from "../components/Spinner";
 import ClientInfo from "../components/ClientInfo";
 import DeleteProjectButton from "../components/DeleteProjectButton";
+import EditProjectForm from "../components/EditProjectForm";
 
 export default function Project() {
   // useParams: A hook that returns the URL parameters for the current route. Useful for getting the id of the current project
@@ -41,6 +42,8 @@ export default function Project() {
               </>
             )
           }
+
+          <EditProjectForm project={data.project} />
           <DeleteProjectButton projectId={data.project.id} />
         </div>
       )}

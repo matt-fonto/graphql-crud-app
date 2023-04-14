@@ -19,7 +19,6 @@ export default function AddProjectModal() {
     // update: we want to update the page after the mutation
     update(cache, { data: { addProject } }) {
       const { projects } = cache.readQuery({ query: GET_PROJECTS });
-
       cache.writeQuery({
         query: GET_PROJECTS,
         data: { projects: [...projects, addProject] },

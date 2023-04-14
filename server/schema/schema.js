@@ -209,23 +209,26 @@ const mutation = new GraphQLObjectType({
           type: new GraphQLEnumType({
             name: "ProjectStatusUpdate",
             values: {
-              new: { value: "To begin" },
-              inProgress: { value: "In progress" },
+              new: { value: "To Begin" },
+              progress: { value: "In Progress" },
               completed: { value: "Completed" },
             },
           }),
         },
-        clientId: { type: GraphQLString },
       },
       resolve(parent, args) {
-        const updateProject = {};
-
-        if (args.name) updateProject.name = args.name;
-        if (args.description) updateProject.description = args.description;
-        if (args.status) updateProject.status = args.status;
-        if (args.clientId) updateProject.clientId = args.clientId;
-
-        return Project.findByIdAndUpdate(args.id, updateProject, { new: true });
+        return Project.findByIdAndUpdate(
+          args.id,
+          {
+            $set: {
+              name: args.name,
+              description: args.description,
+              status: args.status,
+            },
+          },
+          //new: true: return the updated project
+          { new: true }
+        );
       },
     },
   },
